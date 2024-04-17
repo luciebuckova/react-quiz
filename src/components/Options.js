@@ -1,14 +1,31 @@
+import { useQuiz } from '../contexts/QuizContext';
 import Timer from './Timer';
 
-function Options({
-  question,
-  dispatch,
-  answer,
-  index,
-  numQuestions,
-  secondsRemaining,
-}) {
+function Options() {
+  const {
+    question,
+    answer,
+    index,
+    numQuestions,
+    newAnswer,
+    nextQuestion,
+    finish,
+  } = useQuiz();
+
   const hasAnswered = answer !== null;
+
+  function handleNew(index) {
+    newAnswer(index);
+  }
+
+  function handleNext() {
+    nextQuestion();
+  }
+
+  function handleFinish() {
+    finish();
+  }
+
   return (
     <>
       <div className="options">
@@ -23,24 +40,20 @@ function Options({
             }`}
             key={option}
             disabled={hasAnswered}
-            onClick={() => dispatch({ type: 'newAnswer', payload: index })}>
+            onClick={() => handleNew(index)}>
             {option}
           </button>
         ))}
       </div>
       <footer>
-        <Timer dispatch={dispatch} secondsRemaining={secondsRemaining} />
+        <Timer />
         {hasAnswered &&
           (index < numQuestions - 1 ? (
-            <button
-              onClick={() => dispatch({ type: 'nextQuestion' })}
-              className="btn btn-ui">
+            <button onClick={() => handleNext()} className="btn btn-ui">
               Next question
             </button>
           ) : (
-            <button
-              onClick={() => dispatch({ type: 'finish' })}
-              className="btn btn-ui">
+            <button onClick={() => handleFinish()} className="btn btn-ui">
               Finish
             </button>
           ))}
